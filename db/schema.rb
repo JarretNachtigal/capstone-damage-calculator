@@ -10,10 +10,22 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_11_19_194045) do
+ActiveRecord::Schema.define(version: 2021_11_19_200054) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "abilities", force: :cascade do |t|
+    t.string "name"
+    t.string "description"
+    t.string "damage_type"
+    t.integer "base_ad"
+    t.integer "base_ap"
+    t.float "ad_scaling"
+    t.float "ap_scaling"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
 
   create_table "champions", force: :cascade do |t|
     t.string "name"
