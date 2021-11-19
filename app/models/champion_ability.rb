@@ -1,0 +1,2 @@
+class ChampionAbility < ApplicationRecord
+end

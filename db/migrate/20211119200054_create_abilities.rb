@@ -6,8 +6,12 @@ class CreateAbilities < ActiveRecord::Migration[6.1]
       t.string :damage_type
       t.integer :base_ad
       t.integer :base_ap
-      t.float :ad_scaling
-      t.float :ap_scaling
+      t.integer :base_ad_scaling
+      t.integer :base_ap_scaling
+      t.integer :ad_scaling
+      t.integer :ap_scaling
+      t.integer :ad_scaling_per_level
+      t.integer :ap_scaling_per_level
 
       t.timestamps
     end

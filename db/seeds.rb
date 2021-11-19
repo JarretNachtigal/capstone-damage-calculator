@@ -33,3 +33,43 @@
 # )
 
 # Abilities
+
+# Ability.create!(
+#   name: "Piltover Peacemaker",
+#   description: "Caitlyn Q",
+#   damage_type: "physical",
+#   base_ad: 50,
+#   base_ap: 0,
+#   base_ad_scaling: 40,
+#   base_ap_scaling: 0,
+#   ad_scaling: 130,
+#   ap_scaling: 0,
+#   ad_scaling_per_level: 15,
+#   ap_scaling_per_level: 0
+# )
+
+# Ability.create!(
+#   name: "Decisive Strike",
+#   description: "Garen Q",
+#   damage_type: "physical aa steroid",
+#   base_ad: 30,
+#   base_ap: 0,
+#   base_ad_scaling: 30,
+#   base_ap_scaling: 0,
+#   ad_scaling: 50,
+#   ap_scaling: 0,
+#   ad_scaling_per_level: 0,
+#   ap_scaling_per_level: 0
+# )
+
+# join table
+
+# ChampionAbility.create!(
+#   champion_id: 1,
+#   ability_id: 1
+# )
+
+# ChampionAbility.create!(
+#   champion_id: 2,
+#   ability_id: 2
+# )

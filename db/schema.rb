@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_11_19_200054) do
+ActiveRecord::Schema.define(version: 2021_11_19_202323) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -21,8 +21,19 @@ ActiveRecord::Schema.define(version: 2021_11_19_200054) do
     t.string "damage_type"
     t.integer "base_ad"
     t.integer "base_ap"
-    t.float "ad_scaling"
-    t.float "ap_scaling"
+    t.integer "base_ad_scaling"
+    t.integer "base_ap_scaling"
+    t.integer "ad_scaling"
+    t.integer "ap_scaling"
+    t.integer "ad_scaling_per_level"
+    t.integer "ap_scaling_per_level"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "champion_abilities", force: :cascade do |t|
+    t.integer "champion_id"
+    t.integer "ability_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end
