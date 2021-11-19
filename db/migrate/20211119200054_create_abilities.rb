@@ -12,7 +12,7 @@ class CreateAbilities < ActiveRecord::Migration[6.1]
       t.integer :ap_scaling
       t.integer :ad_scaling_per_level
       t.integer :ap_scaling_per_level
-
+      t.integer :champion_id
       t.timestamps
     end
   end

@@ -13,7 +13,6 @@ class CreateChampions < ActiveRecord::Migration[6.1]
       t.float :ap_scaling
       t.float :mr_scaling
       t.float :armor_scaling
-      t.integer :champion_abilities_id
       t.timestamps
     end
   end
