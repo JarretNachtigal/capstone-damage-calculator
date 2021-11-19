@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_11_19_200054) do
+ActiveRecord::Schema.define(version: 2021_11_19_210357) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -28,6 +28,14 @@ ActiveRecord::Schema.define(version: 2021_11_19_200054) do
     t.integer "ad_scaling_per_level"
     t.integer "ap_scaling_per_level"
     t.integer "champion_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "calculations", force: :cascade do |t|
+    t.integer "champion_id_one"
+    t.integer "champion_id_two"
+    t.integer "ability_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end
