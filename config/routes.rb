@@ -1,3 +1,7 @@
 Rails.application.routes.draw do
-  # For details on the DSL available within this file, see https://guides.rubyonrails.org/routing.html
+  get "/calculations" => "calculations#index"
+  get "/calculations/:id" => "calculations#show"
+  patch "/calculations/:id" => "calculations#update"
+  post "/calculations" => "calculations#create"
+  delete "/calculations/:id" => "calculations#destroy"
 end
