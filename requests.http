@@ -17,7 +17,7 @@ Content-Type: application/json
   "ability_id": 1
 }
 
-### destroy
+### destroy - this id doesnt work anymore
 
 DELETE http://localhost:3000/calculations/1.json
 Content-Type: application/json

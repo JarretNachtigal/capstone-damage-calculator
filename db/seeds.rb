@@ -44,6 +44,7 @@
 #   ap_scaling: 0,
 #   ad_scaling_per_level: 15,
 #   ap_scaling_per_level: 0,
+#   keywords: SINGLE PROC,
 #   champion_id: 1
 # )
 
@@ -59,7 +60,6 @@
 #   ap_scaling: 0,
 #   ad_scaling_per_level: 0,
 #   ap_scaling_per_level: 0,
+#   keywords: AA STEROID,
 #   champion_id: 2
 # )
-
-# join table
