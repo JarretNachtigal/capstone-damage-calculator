@@ -1,19 +1,20 @@
 class Calculation < ApplicationRecord
   # BASE DAMAGE OF AN ABILITY IS STORED AS (BASE - BASE_SCALING) AND WILL BE CORRECTED
   # DURING RUN. EX. CAIT R AD = 300 AT LVL 1, STORED AS 75 + (225 * ABILITY_LEVEL)
+  # THIS ALSO APPLIES TO CHAMPION BASE STATS
   
   # this function will use the keywords field of the ability model to decide
   # what damage fields needs to be returned
   def self.handle_output(ability, champ_one, champ_two, params)
+    to_return = ""
     if ability.keywords == "SINGLE PROC" && ability.damage_type == 'physical'
-      return Calculation.single_proc_ad(ability, champ_one, champ_two, params)
+      to_return += Calculation.single_proc_ad(ability, champ_one, champ_two, params).to_s
+    elsif ability.keywords == "SINGLE PROC" && ability.damage_type == 'magic'
+      to_return += Calculation.single_proc_ap(ability, champ_one, champ_two, params).to_s
+    elsif ability.keywords == "AA STEROID"
+      to_return += Calculation.auto_attack_steroid(ability, champ_one, champ_two, params).to_s
     end
-    if ability.keywords == "SINGLE PROC" && ability.damage_type == 'magic'
-      return Calculation.single_proc_ap(ability, champ_one, champ_two, params)
-    end
-    if ability.keywords == "AA STEROID"
-      return Calculation.auto_attack_steroid(ability, champ_one, champ_two, params)
-    end
+    return to_return
   end
 
   # single instance of damage, auto attack damage included
