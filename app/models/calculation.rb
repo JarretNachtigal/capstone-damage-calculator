@@ -24,6 +24,7 @@ class Calculation < ApplicationRecord
     return Calculation.single_proc(ability, champ_one, champ_two, params)
   end
   # this can call cait passive with extra stuff?
+  def self.ability_caitlyn_w(ability, champ_one, champ_two, params)
     return "crit doesnt exist yet, cannot be calculated"
   end
   def self.ability_caitlyn_e(ability, champ_one, champ_two, params)
