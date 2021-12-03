@@ -12,18 +12,10 @@ class Calculation < ApplicationRecord
     return to_return
   end
 
+  # called by handle_output, decides which ability method to call. replace with something smarter if possible
   def self.decide_method(ability, champ_one, champ_two, params)
-    if ability.keywords == "caitlyn_q"
-      return ability_caitlyn_q(ability, champ_one, champ_two, params)
-    elsif ability.keywords == "caitlyn_e"
-      return ability_caitlyn_e(ability, champ_one, champ_two, params)
-    elsif ability.keywords == "caitlyn_w"
-      return ability_caitlyn_w(ability, champ_one, champ_two, params)
-    elsif ability.keywords == "caitlyn_r"
-      return ability_caitlyn_r(ability, champ_one, champ_two, params)
-    else
-      return 'this is broken you monki'
-    end
+    # calls ability methods dynamically. saves like 1000 lines. big move
+    return Calculation.send("ability_#{ability.keywords}", ability, champ_one, champ_two, params)
   end
 
   # ----- CAITLYN -----
@@ -33,7 +25,7 @@ class Calculation < ApplicationRecord
   end
   # this can call cait passive with extra stuff?
   def self.ability_caitlyn_w(ability, champ_one, champ_two, params)
-    p (ability, champ_one, champ_two, params)
+    # p (ability, champ_one, champ_two, params)
     return "crit doesnt exist yet, cannot be calculated"
   end
   def self.ability_caitlyn_e(ability, champ_one, champ_two, params)
@@ -43,25 +35,56 @@ class Calculation < ApplicationRecord
     return Calculation.single_proc(ability, champ_one, champ_two, params)
   end
   def self.ability_caitlyn_passive(ability, champ_one, champ_two, params)
-    p (ability, champ_one, champ_two, params)
+    # p (ability, champ_one, champ_two, params)
     return "crit doesnt exist yet, cannot be calculated"
   end
 
   # ----- GAREN -----
 
   def self.ability_garen_q(ability, champ_one, champ_two, params)
-    return Calculation.single_proc_ad(ability, champ_one, champ_two, params).to_s
+    return Calculation.auto_attack_steroid(ability, champ_one, champ_two, params).to_s
   end
+
   # this can call cait passive with extra stuff?
   def self.ability_garen_w(ability, champ_one, champ_two, params)
-    p (ability, champ_one, champ_two, params)
     return "defensive abilities are not implemented yet"
   end
+
   def self.ability_garen_e(ability, champ_one, champ_two, params)
-    return Calculation.single_proc_ad(ability, champ_one, champ_two, params).to_s
+    # hard coded, refactor is worth while - attack speed doesnt exist, spins cannot be calculated
+    spins = 7
+    damage = 0 # acc
+    # garen e base damage does not scale linearly - has additional scaling with champion level
+    additional_base_damage = 0
+    level = params["champ_one_level"].to_i
+    if level < 10 && level != 1
+      additional_base_damage = 0.8 * (level-1)
+    else # garen's level is higher than 9
+      levels_above_nine = level-9
+      additional_base_damage = 0.8 * (level-1) # damage scaling up to level 9
+      additional_base_damage += levels_above_nine * 0.2 # damage scaling above level 9
+    end
+    additional_base_damage = additional_base_damage.round(1) # round to tenth
+    ability.base_ad += additional_base_damage # adds champion level scaling to base damage
+    spins.times do |n|
+      if n < 6
+        damage += Calculation.single_proc_ad(ability, champ_one, champ_two, params).to_f # calls single_proc_ad becuase single_proc returns string
+      else # armor shreded by 25% after 6 hits
+        # still needs armor pen to be implemented
+        damage += Calculation.single_proc_ad(ability, champ_one, champ_two, params).to_f # calls single_proc_ad becuase single_proc returns string
+      end
+    end
+    return "#{damage * 1.25} physical damage to nearest, #{damage} physical damage to others, additional base damage: #{additional_base_damage}"
   end
+
   def self.ability_garen_r(ability, champ_one, champ_two, params)
-    return Calculation.single_proc_ad(ability, champ_one, champ_two, params).to_s
+    # hard coded, refactor later if worth while
+    base = 150 * params["ability_level"]
+    percent_missing_health_scaling = 20 + (params["ability_level"] * 5)
+    # defending champion current health must be added to calculation model
+    # ----- current hp calc here -----
+    # return base only for now
+    return "#{base} true damage"
   end
 
 
@@ -112,7 +135,8 @@ class Calculation < ApplicationRecord
   def self.single_proc_ap(ability, champ_one, champ_two, params)
     # relevent stats
     defending_mr = champ_two.base_mr + (champ_two.mr_scaling * params["champ_two_level"])
-    attacking_damage = champ_one.base_ap + (champ_one.ap_scaling * params["champ_one_level"])
+    # items are not implemented yet, no ap on champion
+    attacking_damage = 0
     # damage stat of the ability
     base = ability.base_ap + (ability.base_ap_scaling * params["ability_level"])
     scaling = attacking_damage * ((ability.ap_scaling + (ability.ap_scaling_per_level * params["ability_level"])) / 100)

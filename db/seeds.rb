@@ -59,7 +59,7 @@
 #   ap_scaling: 0,
 #   ad_scaling_per_level: 15,
 #   ap_scaling_per_level: 0,
-#   keywords: "SINGLE PROC",
+#   keywords: "caitlyn_q",
 #   champion_id: 1
 # )
 
@@ -75,7 +75,7 @@
 #   ap_scaling: 80,
 #   ad_scaling_per_level: 0,
 #   ap_scaling_per_level: 0,
-#   keywords: "SINGLE PROC",
+#   keywords: "caitlyn_e",
 #   champion_id: 1
 # )
 
@@ -91,7 +91,7 @@
 #   ap_scaling: 0,
 #   ad_scaling_per_level: 0,
 #   ap_scaling_per_level: 0,
-#   keywords: "SINGLE PROC",
+#   keywords: "caitlyn_r",
 #   champion_id: 1
 # )
 
@@ -107,7 +107,7 @@
 #   ap_scaling: 0,
 #   ad_scaling_per_level: 0,
 #   ap_scaling_per_level: 0,
-#   keywords: "AA STEROID",
+#   keywords: "garen_q",
 #   champion_id: 2
 # )
 
@@ -124,7 +124,7 @@
 #   ap_scaling: 0,
 #   ad_scaling_per_level: 2,
 #   ap_scaling_per_level: 0,
-#   keywords: "GAREN E",
+#   keywords: "garen_e",
 #   champion_id: 2
 # )
 
@@ -135,13 +135,13 @@
 #   damage_type: "true",
 #   base_ad: 0, # remember how level scaling works
 #   base_ap: 0,
-#   base_ad_scaling: 150,
+#   base_ad_scaling: 0,
 #   base_ap_scaling: 0,
-#   ad_scaling: 25,
+#   ad_scaling: 0,
 #   ap_scaling: 0,
-#   ad_scaling_per_level: 5,
+#   ad_scaling_per_level: 0,
 #   ap_scaling_per_level: 0,
-#   keywords: "GAREN R",
+#   keywords: "garen_r",
 #   champion_id: 2
 # )
 
@@ -158,7 +158,7 @@
 #   ap_scaling: 0,
 #   ad_scaling_per_level: 25,
 #   ap_scaling_per_level: 0,
-#   keywords: "CAITLYN PASSIVE",
+#   keywords: "caitlyn_passive",
 #   champion_id: 1
 # )
 
@@ -175,7 +175,7 @@
 #   ap_scaling: 0,
 #   ad_scaling_per_level: 15,
 #   ap_scaling_per_level: 0,
-#   keywords: "CAITLYN PASSIVE",
+#   keywords: "caitlyn_w",
 #   champion_id: 1
 # )
 
