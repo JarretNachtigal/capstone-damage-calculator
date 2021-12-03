@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_11_24_192540) do
+ActiveRecord::Schema.define(version: 2021_12_03_192101) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -55,7 +55,6 @@ ActiveRecord::Schema.define(version: 2021_11_24_192540) do
     t.integer "base_armor"
     t.integer "hp_scaling"
     t.float "ad_scaling"
-    t.float "ap_scaling"
     t.float "mr_scaling"
     t.float "armor_scaling"
     t.datetime "created_at", precision: 6, null: false
