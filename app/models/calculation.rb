@@ -24,8 +24,6 @@ class Calculation < ApplicationRecord
     return Calculation.single_proc(ability, champ_one, champ_two, params)
   end
   # this can call cait passive with extra stuff?
-  def self.ability_caitlyn_w(ability, champ_one, champ_two, params)
-    # p (ability, champ_one, champ_two, params)
     return "crit doesnt exist yet, cannot be calculated"
   end
   def self.ability_caitlyn_e(ability, champ_one, champ_two, params)
@@ -35,7 +33,6 @@ class Calculation < ApplicationRecord
     return Calculation.single_proc(ability, champ_one, champ_two, params)
   end
   def self.ability_caitlyn_passive(ability, champ_one, champ_two, params)
-    # p (ability, champ_one, champ_two, params)
     return "crit doesnt exist yet, cannot be calculated"
   end
 
@@ -47,12 +44,12 @@ class Calculation < ApplicationRecord
 
   # this can call cait passive with extra stuff?
   def self.ability_garen_w(ability, champ_one, champ_two, params)
-    return "defensive abilities are not implemented yet"
+    return "defensive abilities are not implemented"
   end
 
   def self.ability_garen_e(ability, champ_one, champ_two, params)
-    # hard coded, refactor is worth while - attack speed doesnt exist, spins cannot be calculated
-    spins = 7
+    # hard coded, refactor if worth while - attack speed doesnt exist, spins cannot be calculated
+    spins = 7 # uses base number of spins for now
     damage = 0 # acc
     # garen e base damage does not scale linearly - has additional scaling with champion level
     additional_base_damage = 0
@@ -70,11 +67,10 @@ class Calculation < ApplicationRecord
       if n < 6
         damage += Calculation.single_proc_ad(ability, champ_one, champ_two, params).to_f # calls single_proc_ad becuase single_proc returns string
       else # armor shreded by 25% after 6 hits
-        # still needs armor pen to be implemented
-        damage += Calculation.single_proc_ad(ability, champ_one, champ_two, params).to_f # calls single_proc_ad becuase single_proc returns string
+        damage += Calculation.single_proc_ad(ability, champ_one, champ_two, params, 25).to_f # calls single_proc_ad becuase single_proc returns string
       end
     end
-    return "#{damage * 1.25} physical damage to nearest, #{damage} physical damage to others, additional base damage: #{additional_base_damage}"
+    return "#{damage * 1.25} physical damage to nearest, #{damage} physical damage to others"
   end
 
   def self.ability_garen_r(ability, champ_one, champ_two, params)
@@ -115,9 +111,13 @@ class Calculation < ApplicationRecord
   end
 
   # single instance of damage, physical, called by single_proc
-  def self.single_proc_ad(ability, champ_one, champ_two, params)
+  def self.single_proc_ad(ability, champ_one, champ_two, params, armor_shred = nil)
     # relevent stats
     defending_armor = champ_two.base_armor + (champ_two.armor_scaling * params["champ_two_level"])
+     # reduces armor by armor_shred%
+    if armor_shred
+      defending_armor = defending_armor * ((100-armor_shred)/100)
+    end
     attacking_damage = champ_one.base_ad + (champ_one.ad_scaling * params["champ_one_level"])
     # damage stat of the ability
     base = ability.base_ad + (ability.base_ad_scaling * params["ability_level"])
