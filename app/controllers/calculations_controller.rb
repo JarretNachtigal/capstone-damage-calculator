@@ -26,6 +26,8 @@ class CalculationsController < ApplicationController
     render json: calculations
   end
   # this needs fields updated
+  # this will probably be replaced. user will create new calculation with fields filled from
+  # the one they selected to edit, and allowed to edit those fields before rerunning create
   def update
     calculation = Calculation.find(params[:id])
     calculation.champion_id_one = params[:champion_id_one] || calculation.champion_id_one

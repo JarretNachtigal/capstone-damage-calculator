@@ -179,6 +179,25 @@
 #   champion_id: 1
 # )
 
+# # Items ----------------
+
+# Item.create!(
+#   name: "Doran's Blade",
+#   description: "ad starter item",
+#   ad: 8,
+#   ap: 0,
+#   hp: 80
+# )
+
+# Item.create!(
+#   name: "Doran's Ring",
+#   description: "ap starter item",
+#   ad: 0,
+#   ap: 15,
+#   hp: 70
+# )
+
+
 # # calculations
 
 # # caitlyn piltover peacekeeper into garen

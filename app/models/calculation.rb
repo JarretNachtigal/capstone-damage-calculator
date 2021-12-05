@@ -25,6 +25,7 @@ class Calculation < ApplicationRecord
   end
   # this can call cait passive with extra stuff?
   def self.ability_caitlyn_w(ability, champ_one, champ_two, params)
+    p ability, champ_one, champ_two, params
     return "crit doesnt exist yet, cannot be calculated"
   end
   def self.ability_caitlyn_e(ability, champ_one, champ_two, params)
@@ -34,6 +35,7 @@ class Calculation < ApplicationRecord
     return Calculation.single_proc(ability, champ_one, champ_two, params)
   end
   def self.ability_caitlyn_passive(ability, champ_one, champ_two, params)
+    p ability, champ_one, champ_two, params
     return "crit doesnt exist yet, cannot be calculated"
   end
 
@@ -45,6 +47,7 @@ class Calculation < ApplicationRecord
 
   # this can call cait passive with extra stuff?
   def self.ability_garen_w(ability, champ_one, champ_two, params)
+    p ability, champ_one, champ_two, params
     return "defensive abilities are not implemented"
   end
 
@@ -75,6 +78,7 @@ class Calculation < ApplicationRecord
   end
 
   def self.ability_garen_r(ability, champ_one, champ_two, params)
+    p ability, champ_one, champ_two, params
     # hard coded, refactor later if worth while
     base = 150 * params["ability_level"]
     percent_missing_health_scaling = 20 + (params["ability_level"] * 5)
@@ -134,6 +138,7 @@ class Calculation < ApplicationRecord
 
   # single instance of damage, magic, called by single_proc
   def self.single_proc_ap(ability, champ_one, champ_two, params)
+    p champ_one
     # relevent stats
     defending_mr = champ_two.base_mr + (champ_two.mr_scaling * params["champ_two_level"])
     # items are not implemented yet, no ap on champion
