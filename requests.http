@@ -3,12 +3,13 @@ POST http://localhost:3000/calculations.json
 Content-Type: application/json
 
 {
-  "champion_id_one": 1,
-  "champion_id_two": 2,
-  "ability_id": 8,
-  "champ_one_level": 9,
+  "champion_id_one": 2,
+  "champion_id_two": 1,
+  "ability_id": 6,
+  "champ_one_level": 6,
   "champ_two_level": 6,
-  "ability_level": 1
+  "ability_level": 2,
+  "defending_champion_current_hp": 500
 }
 ### update
 PATCH http://localhost:3000/calculations/1.json

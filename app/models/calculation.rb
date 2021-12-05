@@ -78,14 +78,19 @@ class Calculation < ApplicationRecord
   end
 
   def self.ability_garen_r(ability, champ_one, champ_two, params)
+    defending_champion_current_hp = params[:defending_champion_current_hp].to_i || champ_two.base_hp + (champ_two.hp_scaling * params[:champ_two_level].to_i)
     p ability, champ_one, champ_two, params
     # hard coded, refactor later if worth while
     base = 150 * params["ability_level"]
-    percent_missing_health_scaling = 20 + (params["ability_level"] * 5)
+    # % missing hp scaling by R level
+    percent_missing_health_scaling = (20.0 + (params["ability_level"] * 5.0))/100.0
     # defending champion current health must be added to calculation model
-    # ----- current hp calc here -----
-    # return base only for now
-    return "#{base} true damage"
+    # ----- hp calc here -----
+    missing_hp = defending_champion_current_hp - champ_two.base_hp + (champ_two.hp_scaling * params[:champ_two_level].to_i)
+    missing_hp_damage = missing_hp * percent_missing_health_scaling
+    # final
+    full_damage = (base + missing_hp_damage).round
+    return "#{full_damage} true damage"
   end
 
 

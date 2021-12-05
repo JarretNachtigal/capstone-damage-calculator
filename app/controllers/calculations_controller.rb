@@ -10,7 +10,9 @@ class CalculationsController < ApplicationController
       champ_one_level: params[:champ_one_level],
       champ_two_level: params[:champ_two_level],
       ability_level: params[:ability_level],
-      output: Calculation.handle_output(ability, champ_one, champ_two, params)
+      output: Calculation.handle_output(ability, champ_one, champ_two, params),
+      # default to full hp
+      defending_champion_current_hp: params[:defending_champion_current_hp]
     )
 
     if calculation.save
