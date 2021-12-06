@@ -5,7 +5,7 @@ Content-Type: application/json
 {
   "champion_id_one": 1,
   "champion_id_two": 2,
-  "ability_id": 7,
+  "ability_id": 8,
   "champ_one_level": 6,
   "champ_two_level": 6,
   "ability_level": 2,

@@ -26,7 +26,14 @@ class Calculation < ApplicationRecord
   # this can call cait passive with extra stuff?
   def self.ability_caitlyn_w(ability, champ_one, champ_two, params)
     p ability, champ_one, champ_two, params
-    return "crit doesnt exist yet, cannot be calculated"
+    # correct data for passive damage
+    passive = Ability.find(7)
+    passive_damage = ability_caitlyn_passive(passive, champ_one, champ_two, params)
+    passive_damage = passive_damage.split(' ')
+    passive_damage = passive_damage[0].to_f
+    w_damage = single_proc_ad(ability, champ_one, champ_two, params)
+    damage = passive_damage + w_damage
+    return "#{w_damage.round} from trap, #{passive_damage.round} from headshot, #{damage.round} total"
   end
   def self.ability_caitlyn_e(ability, champ_one, champ_two, params)
     return Calculation.single_proc(ability, champ_one, champ_two, params)
