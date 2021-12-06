@@ -36,7 +36,30 @@ class Calculation < ApplicationRecord
   end
   def self.ability_caitlyn_passive(ability, champ_one, champ_two, params)
     p ability, champ_one, champ_two, params
-    return "crit doesnt exist yet, cannot be calculated"
+    # damage from normal aa
+    base_aa_damage = champ_one.base_ad.to_f + (champ_one.ad_scaling * params[:champ_one_level].to_f)
+    # passive level
+    passive_level = 0
+    if params[:champ_one_level].to_i < 7
+      passive_level = 1
+    elsif params[:champ_one_level].to_i < 13
+      passive_level = 2
+    else
+      passive_level = 3
+    end
+    # damage from passive level scaling
+    base_ad_scaling_damage = ability.base_ad + (ability.base_ad_scaling * passive_level)
+    # damage from crit scaling and infinity edge once it exists
+    crit_scaling_damage = 0.5 * (62.5 * champ_one.crit_damage_multiplier) # .5 hard coded as crit chance
+    # damage before armor
+    pre_mitigation_damage = (base_aa_damage + base_ad_scaling_damage + crit_scaling_damage).round
+    # armor stat of defending champion
+    defending_armor = champ_two.base_armor + (champ_two.armor_scaling * params["champ_two_level"])
+    damage_multiplier = 100/(100 + defending_armor)
+    # damage once reduced by armor
+    damage = pre_mitigation_damage * damage_multiplier
+    # final damage return
+    return "#{damage.round} physical damage (without critical hit)"
   end
 
   # ----- GAREN -----
@@ -79,11 +102,11 @@ class Calculation < ApplicationRecord
 
   def self.ability_garen_r(ability, champ_one, champ_two, params)
     defending_champion_current_hp = params[:defending_champion_current_hp].to_i || champ_two.base_hp + (champ_two.hp_scaling * params[:champ_two_level].to_i)
-    p ability, champ_one, champ_two, params
+    p champ_one
     # hard coded, refactor later if worth while
-    base = 150 * params["ability_level"]
+    base = ability.base_ad_scaling * params["ability_level"]
     # % missing hp scaling by R level
-    percent_missing_health_scaling = (20.0 + (params["ability_level"] * 5.0))/100.0
+    percent_missing_health_scaling = (ability.ad_scaling.to_f + (params["ability_level"] * ability.ad_scaling_per_level.to_f))/100.0
     # defending champion current health must be added to calculation model
     # ----- hp calc here -----
     missing_hp = defending_champion_current_hp - champ_two.base_hp + (champ_two.hp_scaling * params[:champ_two_level].to_i)
@@ -133,7 +156,7 @@ class Calculation < ApplicationRecord
     base = ability.base_ad + (ability.base_ad_scaling * params["ability_level"])
     scaling = attacking_damage * ((ability.ad_scaling + (ability.ad_scaling_per_level * params["ability_level"])) / 100)
     pre_mitigation_damage = base + scaling
-    # armor stat of defending champion
+    # % reduced damage
     damage_multiplier = 100/(100 + defending_armor)
     # damage once reduced by armor
     damage = pre_mitigation_damage * damage_multiplier
@@ -152,7 +175,7 @@ class Calculation < ApplicationRecord
     base = ability.base_ap + (ability.base_ap_scaling * params["ability_level"])
     scaling = attacking_damage * ((ability.ap_scaling + (ability.ap_scaling_per_level * params["ability_level"])) / 100)
     pre_mitigation_damage = base + scaling
-    # armor stat of defending champion
+    # % reduced damage
     damage_multiplier = 100/(100 + defending_mr)
     # damage once reduced by armor
     damage = pre_mitigation_damage * damage_multiplier

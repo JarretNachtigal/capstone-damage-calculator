@@ -3,9 +3,9 @@ POST http://localhost:3000/calculations.json
 Content-Type: application/json
 
 {
-  "champion_id_one": 2,
-  "champion_id_two": 1,
-  "ability_id": 6,
+  "champion_id_one": 1,
+  "champion_id_two": 2,
+  "ability_id": 7,
   "champ_one_level": 6,
   "champ_two_level": 6,
   "ability_level": 2,
