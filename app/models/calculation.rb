@@ -23,11 +23,11 @@ class Calculation < ApplicationRecord
   def self.ability_caitlyn_q(ability, champ_one, champ_two, params)
     return Calculation.single_proc(ability, champ_one, champ_two, params)
   end
-  # this can call cait passive with extra stuff?
+  # this can call cait_passive
   def self.ability_caitlyn_w(ability, champ_one, champ_two, params)
     p ability, champ_one, champ_two, params
     # correct data for passive damage
-    passive = Ability.find(7)
+    passive = Ability.find(7) # THIS NUMBER MIGHT CHANGE IF I RESEED THE DB -----------------------
     passive_damage = ability_caitlyn_passive(passive, champ_one, champ_two, params)
     passive_damage = passive_damage.split(' ')
     passive_damage = passive_damage[0].to_f
@@ -143,7 +143,7 @@ class Calculation < ApplicationRecord
     return damage.round
   end
 
-  # handle ad and ap method calls for abilities that do a single proc of damage
+  # handle ad and ap method calls for abilities that do a single proc of damage with mixed scaling
   def self.single_proc(ability, champ_one, champ_two, params)
     attack_damage = single_proc_ad(ability, champ_one, champ_two, params)
     magic_damage = single_proc_ap(ability, champ_one, champ_two, params)
