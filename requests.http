@@ -8,8 +8,7 @@ Content-Type: application/json
   "ability_id": 8,
   "champ_one_level": 6,
   "champ_two_level": 6,
-  "ability_level": 2,
-  "defending_champion_current_hp": 500
+  "ability_level": 1
 }
 ### update
 PATCH http://localhost:3000/calculations/1.json

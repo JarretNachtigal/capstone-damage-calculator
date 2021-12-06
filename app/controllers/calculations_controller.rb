@@ -3,6 +3,12 @@ class CalculationsController < ApplicationController
     champ_one = Champion.find(params[:champion_id_one])
     champ_two = Champion.find(params[:champion_id_two])
     ability = Ability.find(params[:ability_id])
+      # default to full hp if not input
+    if params[:defending_champion_current_hp]
+      hp = params[:defending_champion_current_hp]
+    else
+      hp = champ_two.base_hp + (champ_two.hp_scaling * params[:champ_two_level])
+    end
     calculation = Calculation.new(
       champion_id_one: params[:champion_id_one],
       champion_id_two: params[:champion_id_two],
@@ -11,8 +17,7 @@ class CalculationsController < ApplicationController
       champ_two_level: params[:champ_two_level],
       ability_level: params[:ability_level],
       output: Calculation.handle_output(ability, champ_one, champ_two, params),
-      # default to full hp
-      defending_champion_current_hp: params[:defending_champion_current_hp]
+      defending_champion_current_hp: hp
     )
 
     if calculation.save
