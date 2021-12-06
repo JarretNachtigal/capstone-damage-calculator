@@ -23,25 +23,30 @@ class Calculation < ApplicationRecord
   end
 
   def self.init_fields(ability,champ_one,champ_two, params)
-    # use these instead of perma-passing the same params?
     # refactor again to implement items with method calls
-    @champ_one_ad = champ_one.base_ad.to_f + (champ_one.ad_scaling * params[:champ_one_level].to_f)
+    @champ_one_ad = champ_one.base_ad + (champ_one.ad_scaling * params["champ_one_level"].to_f)
     # this needs items
     @champ_one_ap = 0
     # this one uses champion base stats
-    @champ_two_max_hp = champ_two.base_hp + (champ_two.hp_scaling * params[:champ_two_level].to_i)
+    @champ_two_max_hp = champ_two.base_hp + (champ_two.hp_scaling * params["champ_two_level"].to_f)
     # this one uses input from user
     if params["defending_champion_current_hp"]
-      @champ_two_current_hp = params[:defending_champion_current_hp]
+      @champ_two_current_hp = params["defending_champion_current_hp"]
     else
       @champ_two_current_hp = @champ_two_max_hp
     end
+    # defending champion defensive stats
     @champ_two_mr = champ_two.base_mr + (champ_two.mr_scaling * params["champ_two_level"])
     @champ_two_armor = champ_two.base_armor + (champ_two.armor_scaling * params["champ_two_level"])
     @armor_damage_multiplier = 100/(100 + champ_two.base_armor + (champ_two.armor_scaling * params["champ_two_level"]))
     @mr_damage_multiplier = 100/(100 + champ_two.base_mr + (champ_two.mr_scaling * params["champ_two_level"]))
+    # ability base damages (no ad or ap scaling from champion or item stats)
     @ability_base_ad = ability.base_ad + (ability.base_ad_scaling * params["ability_level"])
     @ability_base_ap = ability.base_ap + (ability.base_ap_scaling * params["ability_level"])
+    # ability % scaling (this is the %, not the % of the champions stat)
+    @ability_ad_scaling = (ability.ad_scaling + (ability.ad_scaling_per_level * params["ability_level"])) / 100
+    @ability_ap_scaling = (ability.ap_scaling + (ability.ap_scaling_per_level * params["ability_level"])) / 100
+    # extra stuff as they are needed for specific calculations
     @ability_level = params["ability_level"]
     @ability = ability
     @crit_damage_multiplier = champ_one.crit_damage_multiplier
@@ -124,20 +129,20 @@ class Calculation < ApplicationRecord
       if n < 6
         damage += Calculation.single_proc_ad.to_f # calls single_proc_ad becuase single_proc returns string
         @ability_base_ad *= 1.25
-        @ability.ad_scaling *= 1.25
+        @ability_ad_scaling *= 1.25
         nearest_enemy_damage += Calculation.single_proc_ad.to_f
         @ability_base_ad /= 1.25
-        @ability.ad_scaling /= 1.25
+        @ability_ad_scaling /= 1.25
       else # armor shreded by 25% after 6 hits
         damage += Calculation.single_proc_ad(25).to_f # calls single_proc_ad becuase single_proc returns string
         @ability_base_ad *= 1.25
-        @ability.ad_scaling *= 1.25
+        @ability_ad_scaling *= 1.25
         nearest_enemy_damage += Calculation.single_proc_ad(25).to_f
         @ability_base_ad /= 1.25
-        @ability.ad_scaling /= 1.25
+        @ability_ad_scaling /= 1.25
       end
     end
-    return "#{nearest_enemy_damage} physical damage to nearest, #{damage} physical damage to others#{}"
+    return "#{nearest_enemy_damage} physical damage to nearest, #{damage} physical damage to others#{@ability_ad_scaling}"
   end
 
   def self.ability_garen_r
@@ -145,7 +150,7 @@ class Calculation < ApplicationRecord
     # hard coded, refactor later if worth while
     # base = ability.base_ad_scaling * params["ability_level"]
     # % missing hp scaling by R level
-    percent_missing_health_scaling = (@ability.ad_scaling.to_f + @ability_level * @ability.ad_scaling_per_level.to_f)/100.0
+    percent_missing_health_scaling = (@ability.ad_scaling + @ability_level * @ability.ad_scaling_per_level.to_f)/100.0
     # defending champion current health must be added to calculation model
     # ----- hp calc here -----
     missing_hp = @champ_two_max_hp - @champ_two_current_hp
@@ -183,10 +188,9 @@ class Calculation < ApplicationRecord
     if armor_shred
       @champ_two_armor = @champ_two_armor * ((100-armor_shred)/100)
     end
-    # scaling ability damage base on champ ad
-    scaling = @champ_one_ad * ((@ability.ad_scaling + (@ability.ad_scaling_per_level * @ability_level)) / 100)
     # full damage stat before reduction
-    pre_mitigation_damage = @ability_base_ad + scaling
+    scaling_damage = @champ_one_ad * (@ability_ad_scaling/100)
+    pre_mitigation_damage = @ability_base_ad + scaling_damage
     # damage once reduced by armor
     damage = pre_mitigation_damage * @armor_damage_multiplier
     # final damage return
@@ -195,9 +199,9 @@ class Calculation < ApplicationRecord
 
   # single instance of damage, magic, called by single_proc
   def self.single_proc_ap
-    # damage stat of the ability
-    scaling = @champ_one_ap * ((@ability.ap_scaling + (@ability.ap_scaling_per_level * @ability_level)) / 100)
-    pre_mitigation_damage = @ability_base_ap + scaling
+    # full damage stat before reduction
+    scaling_damage = @champ_one_ap * (@ability_ap_scaling/100)
+    pre_mitigation_damage = @ability_base_ap + scaling_damage
     # damage once reduced by mr
     damage = pre_mitigation_damage * @mr_damage_multiplier
     # final damage return

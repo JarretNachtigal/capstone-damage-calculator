@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_12_05_233224) do
+ActiveRecord::Schema.define(version: 2021_12_06_205307) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -49,12 +49,11 @@ ActiveRecord::Schema.define(version: 2021_12_05_233224) do
   create_table "champions", force: :cascade do |t|
     t.string "name"
     t.string "description"
-    t.integer "base_hp"
-    t.integer "base_ad"
-    t.integer "base_ap"
-    t.integer "base_mr"
-    t.integer "base_armor"
-    t.integer "hp_scaling"
+    t.float "base_hp"
+    t.float "base_ad"
+    t.float "base_mr"
+    t.float "base_armor"
+    t.float "hp_scaling"
     t.float "ad_scaling"
     t.float "mr_scaling"
     t.float "armor_scaling"
