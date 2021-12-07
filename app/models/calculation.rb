@@ -38,7 +38,6 @@ class Calculation < ApplicationRecord
     # defending champion defensive stats
     @champ_two_mr = champ_two.base_mr + (champ_two.mr_scaling * params["champ_two_level"])
     @champ_two_armor = champ_two.base_armor + (champ_two.armor_scaling * params["champ_two_level"])
-    @armor_damage_multiplier = 100/(100 + champ_two.base_armor + (champ_two.armor_scaling * params["champ_two_level"]))
     @mr_damage_multiplier = 100/(100 + champ_two.base_mr + (champ_two.mr_scaling * params["champ_two_level"]))
     # ability base damages (no ad or ap scaling from champion or item stats)
     @ability_base_ad = ability.base_ad + (ability.base_ad_scaling * params["ability_level"])
@@ -94,7 +93,8 @@ class Calculation < ApplicationRecord
     # damage before armor
     pre_mitigation_damage = (@champ_one_ad + base_ad_scaling_damage + crit_scaling_damage).round
     # damage once reduced by armor
-    damage = pre_mitigation_damage * @armor_damage_multiplier
+    armor_damage_multiplier = 100/(100 + champ_two.base_armor + (champ_two.armor_scaling * params["champ_two_level"]))
+    damage = pre_mitigation_damage * armor_damage_multiplier
     # final damage return
     return "#{damage.round} physical damage (without critical hit)"
   end
@@ -142,13 +142,11 @@ class Calculation < ApplicationRecord
         @ability_ad_scaling /= 1.25
       end
     end
-    return "#{nearest_enemy_damage} physical damage to nearest, #{damage} physical damage to others#{@ability_ad_scaling}"
+    return "#{nearest_enemy_damage} physical damage to nearest, #{damage} physical damage to others"
   end
 
   def self.ability_garen_r
-    # defending_champion_current_hp = params[:defending_champion_current_hp].to_i || champ_two.base_hp + (champ_two.hp_scaling * params[:champ_two_level].to_i)
     # hard coded, refactor later if worth while
-    # base = ability.base_ad_scaling * params["ability_level"]
     # % missing hp scaling by R level
     percent_missing_health_scaling = (@ability.ad_scaling + @ability_level * @ability.ad_scaling_per_level.to_f)/100.0
     # defending champion current health must be added to calculation model
@@ -169,8 +167,10 @@ class Calculation < ApplicationRecord
     scaling = @champ_one_ad * ((@ability.ad_scaling + (@ability.ad_scaling_per_level * @ability_level)) / 100)
     # full damage stat before reduction
     pre_mitigation_damage = @ability_base_ad + scaling + @champ_one_ad # ability base damage + ability scaling damage + auto attack damage
+    # damage multiplier based on defending armor
+    armor_damage_multiplier = 100/(100 + @champ_two_armor)
     # damage once reduced by armor
-    damage = pre_mitigation_damage * @armor_damage_multiplier
+    damage = pre_mitigation_damage * armor_damage_multiplier
     # final damage return
     return damage.round
   end
@@ -189,10 +189,12 @@ class Calculation < ApplicationRecord
       @champ_two_armor = @champ_two_armor * ((100-armor_shred)/100)
     end
     # full damage stat before reduction
-    scaling_damage = @champ_one_ad * (@ability_ad_scaling/100)
+    scaling_damage = @champ_one_ad * @ability_ad_scaling
     pre_mitigation_damage = @ability_base_ad + scaling_damage
+    # damage multiplier based on defending armor
+    armor_damage_multiplier = 100/(100 + @champ_two_armor)
     # damage once reduced by armor
-    damage = pre_mitigation_damage * @armor_damage_multiplier
+    damage = pre_mitigation_damage * armor_damage_multiplier
     # final damage return
     return damage.round
   end
@@ -200,10 +202,13 @@ class Calculation < ApplicationRecord
   # single instance of damage, magic, called by single_proc
   def self.single_proc_ap
     # full damage stat before reduction
-    scaling_damage = @champ_one_ap * (@ability_ap_scaling/100)
+    scaling_damage = @champ_one_ap * @ability_ap_scaling
+    # damage before reduction
     pre_mitigation_damage = @ability_base_ap + scaling_damage
+    # damage multiplier based on defending mr
+    mr_damage_multiplier = 100/(100 + @champ_two_mr)
     # damage once reduced by mr
-    damage = pre_mitigation_damage * @mr_damage_multiplier
+    damage = pre_mitigation_damage * mr_damage_multiplier
     # final damage return
     return damage.round
   end

@@ -8,7 +8,6 @@
 #   description: "Ranged attack damage carry",
 #   base_hp: 417,
 #   base_ad: 58.2,
-#   base_ap: 0,
 #   base_mr: 29.5,
 #   base_armor: 24.5,
 #   hp_scaling: 93,
@@ -22,7 +21,6 @@
 #   description: "Bruiser",
 #   base_hp: 536,
 #   base_ad: 61.5,
-#   base_ap: 0,
 #   base_mr: 31.25,
 #   base_armor: 33,
 #   hp_scaling: 84,
@@ -31,19 +29,18 @@
 #   armor_scaling: 3.0
 # )
 
-# # Champion.create!(
-# #   name: "Viktor", 
-# #   description: "Mage",
-# #   base_hp: 440,
-# #   base_ad: 50,
-# #   base_ap: 0,
-# #   base_mr: 29.5,
-# #   base_armor: 19,
-# #   hp_scaling: 90,
-# #   ad_scaling: 3,
-# #   mr_scaling: 0.5,
-# #   armor_scaling: 4.0
-# # )
+# Champion.create!(
+#   name: "Dummy", 
+#   description: "for testing",
+#   base_hp: 1000,
+#   base_ad: 0,
+#   base_mr: 50,
+#   base_armor: 50,
+#   hp_scaling: 0,
+#   ad_scaling: 0,
+#   mr_scaling: 0,
+#   armor_scaling: 0
+# )
 
 # # # Abilities ----------------------------------------
 
