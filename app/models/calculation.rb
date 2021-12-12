@@ -8,11 +8,15 @@ class Calculation < ApplicationRecord
   # this function will use the keywords field of the ability model to decide
   # what damage fields needs to be returned
   def self.handle_output(ability, champ_one, champ_two, params)
-    # initialize class variables to be used in calculation
-    init_fields(ability, champ_one, champ_two, params)
+    @ability = ability
+    @champ_one = champ_one
+    @champ_two = champ_two
+    @params = params
+    # initialize class variables to be used in calculation (this set will reasonably be used in most calculations, others are initialized when needed)
+    init_offensive_fields()
     # chain start
     to_return = decide_method
-    # this does to output field in calculation table
+    # this goes to output field in calculation table
     return to_return
   end
 
@@ -22,34 +26,37 @@ class Calculation < ApplicationRecord
     return Calculation.send("ability_#{@ability.keywords}")
   end
 
-  def self.init_fields(ability,champ_one,champ_two, params)
-    # refactor again to implement items with method calls
-    @champ_one_ad = champ_one.base_ad + (champ_one.ad_scaling * params["champ_one_level"].to_f)
-    # this needs items
+    # fields always needed in physical damage calculations, initialized as instance variables
+  def self.init_offensive_fields
+    @champ_one_ad = @champ_one.base_ad + (@champ_one.ad_scaling * @params["champ_one_level"])
+    @ability_ad_scaling = (@ability.ad_scaling + (@ability.ad_scaling_per_level * @params["ability_level"])) / 100
+    @ability_base_ad = @ability.base_ad + (@ability.base_ad_scaling * @params["ability_level"])
     @champ_one_ap = 0
+    @ability_ap_scaling = (@ability.ap_scaling + (@ability.ap_scaling_per_level * @params["ability_level"])) / 100
+    @ability_base_ap = @ability.base_ap + (@ability.base_ap_scaling * @params["ability_level"])
+    @ability_level = @params["ability_level"]
+    @champ_one_level = @params["champ_one_level"]
+    @champ_two_level = @params["champ_two_level"]
+  end  
+
+  def self.init_hp_fields
     # this one uses champion base stats
-    @champ_two_max_hp = champ_two.base_hp + (champ_two.hp_scaling * params["champ_two_level"].to_f)
+    @champ_two_max_hp = @champ_two.base_hp + (@champ_two.hp_scaling * @champ_two_level.to_f)
     # this one uses input from user
-    if params["defending_champion_current_hp"]
-      @champ_two_current_hp = params["defending_champion_current_hp"]
+    if @params["defending_champion_current_hp"]
+      @champ_two_current_hp = @params["defending_champion_current_hp"]
     else
       @champ_two_current_hp = @champ_two_max_hp
     end
-    # defending champion defensive stats
-    @champ_two_mr = champ_two.base_mr + (champ_two.mr_scaling * params["champ_two_level"])
-    @champ_two_armor = champ_two.base_armor + (champ_two.armor_scaling * params["champ_two_level"])
-    @mr_damage_multiplier = 100/(100 + champ_two.base_mr + (champ_two.mr_scaling * params["champ_two_level"]))
-    # ability base damages (no ad or ap scaling from champion or item stats)
-    @ability_base_ad = ability.base_ad + (ability.base_ad_scaling * params["ability_level"])
-    @ability_base_ap = ability.base_ap + (ability.base_ap_scaling * params["ability_level"])
-    # ability % scaling (this is the %, not the % of the champions stat)
-    @ability_ad_scaling = (ability.ad_scaling + (ability.ad_scaling_per_level * params["ability_level"])) / 100
-    @ability_ap_scaling = (ability.ap_scaling + (ability.ap_scaling_per_level * params["ability_level"])) / 100
-    # extra stuff as they are needed for specific calculations
-    @ability_level = params["ability_level"]
-    @ability = ability
-    @crit_damage_multiplier = champ_one.crit_damage_multiplier
-    @champ_one_level = params["champ_one_level"]
+  end
+
+  # fields always needed in magic damage calculations, initialized as instance variables
+  def self.init_mr
+    @champ_two_mr = @champ_two.base_mr + (@champ_two.mr_scaling * @champ_two_level)
+  end
+
+  def self.init_armor
+    @champ_two_armor = @champ_two.base_armor + (@champ_two.armor_scaling * @champ_two_level)
   end
 
   # ----- CAITLYN -----
@@ -60,11 +67,13 @@ class Calculation < ApplicationRecord
   # this can call cait_passive
   def self.ability_caitlyn_w
     # correct data for passive damage
-    passive = Ability.find(7) # THIS NUMBER MIGHT CHANGE IF I RESEED THE DB -----------------------
+    passive = Ability.find(7) # change this to find_by "keywords"(caityln_passive)
     passive_damage = Calculation.ability_caitlyn_passive(passive)
     passive_damage = passive_damage.split(' ')
     passive_damage = passive_damage[0].to_f
-    w_damage = Calculation.single_proc_ad()
+    init_armor()
+    damage_multiplier = damage_multiplier(@champ_two_armor)
+    w_damage = Calculation.single_proc_ad(damage_multiplier)
     damage = passive_damage + w_damage
     return "#{w_damage.round} from trap, #{passive_damage.round} from headshot, #{damage.round} total"
   end
@@ -89,12 +98,13 @@ class Calculation < ApplicationRecord
     # damage from passive level scaling
     base_ad_scaling_damage = ability.base_ad + (ability.base_ad_scaling * passive_level)
     # damage from crit scaling and infinity edge once it exists
-    crit_scaling_damage = 0.5 * (62.5 * @crit_damage_multiplier) # 0.5 hard coded as crit chance
+    crit_scaling_damage = 0.5 * (62.5 * @champ_one.crit_damage_multiplier) # 0.5 hard coded as crit chance
     # damage before armor
     pre_mitigation_damage = (@champ_one_ad + base_ad_scaling_damage + crit_scaling_damage).round
     # damage once reduced by armor
-    armor_damage_multiplier = 100/(100 + champ_two.base_armor + (champ_two.armor_scaling * params["champ_two_level"]))
-    damage = pre_mitigation_damage * armor_damage_multiplier
+    init_armor()
+    damage_multiplier = damage_multiplier(@champ_two_armor)
+    damage = pre_mitigation_damage * damage_multiplier
     # final damage return
     return "#{damage.round} physical damage (without critical hit)"
   end
@@ -161,54 +171,85 @@ class Calculation < ApplicationRecord
 
   # ----- MULTI-USE -----
 
-  # single instance of damage, auto attack damage included
-  def self.auto_attack_steroid
-    # ability scaling based on champ ad
-    scaling = @champ_one_ad * ((@ability.ad_scaling + (@ability.ad_scaling_per_level * @ability_level)) / 100)
-    # full damage stat before reduction
-    pre_mitigation_damage = @ability_base_ad + scaling + @champ_one_ad # ability base damage + ability scaling damage + auto attack damage
-    # damage multiplier based on defending armor
-    armor_damage_multiplier = 100/(100 + @champ_two_armor)
-    # damage once reduced by armor
-    damage = pre_mitigation_damage * armor_damage_multiplier
-    # final damage return
-    return damage.round
-  end
+
 
   # handle ad and ap method calls for abilities that do a single proc of damage with mixed scaling
   def self.single_proc
-    attack_damage = single_proc_ad
-    magic_damage = single_proc_ap
-    return "attack damage: #{attack_damage}, magic damage: #{magic_damage}"
+    damage_multiplier = 1 # true damage
+    if @ability.damage_type == "phyical"
+      init_armor()
+      damage_multiplier = damage_multiplier(@champ_two_armor)
+    elsif @ability.damage_type == "magic"
+      init_mr()
+      damage_multiplier = damage_multiplier(@champ_two_mr)
+    end
+    damage = single_proc_ad(damage_multiplier) + single_proc_ap(damage_multiplier)
+    return "#{damage} #{@ability.damage_type} damage"
   end
 
-  # single instance of damage, physical, called by single_proc
-  def self.single_proc_ad(armor_shred = nil)
+  # amount of damage from ad (not damage type of ability overall)
+  def self.single_proc_ad(armor_shred = nil, damage_multiplier)
      # reduces armor by armor_shred%
     if armor_shred
       @champ_two_armor = @champ_two_armor * ((100-armor_shred)/100)
+      # fix damage multiplier for new value
+      damage_multiplier = damage_multiplier(@champ_two_armor)
     end
     # full damage stat before reduction
     scaling_damage = @champ_one_ad * @ability_ad_scaling
+    # ability base damage
+    # base_damage = base_damage() # this should replace @ability_base_ap
+    # damage before reduction
     pre_mitigation_damage = @ability_base_ad + scaling_damage
-    # damage multiplier based on defending armor
-    armor_damage_multiplier = 100/(100 + @champ_two_armor)
     # damage once reduced by armor
-    damage = pre_mitigation_damage * armor_damage_multiplier
+    damage = pre_mitigation_damage * damage_multiplier
     # final damage return
     return damage.round
   end
 
-  # single instance of damage, magic, called by single_proc
-  def self.single_proc_ap
+  # amount of damage from ap (not damage type of ability overall)
+  def self.single_proc_ap(damage_multiplier)
     # full damage stat before reduction
     scaling_damage = @champ_one_ap * @ability_ap_scaling
+    # ability base damage
+    # base_damage = base_damage() # this should replace @ability_base_ap
     # damage before reduction
     pre_mitigation_damage = @ability_base_ap + scaling_damage
-    # damage multiplier based on defending mr
-    mr_damage_multiplier = 100/(100 + @champ_two_mr)
     # damage once reduced by mr
-    damage = pre_mitigation_damage * mr_damage_multiplier
+    damage = pre_mitigation_damage * damage_multiplier
+    # final damage return
+    return damage.round
+  end
+
+  # takes in champions offensive stat values and ability scaling %, returns scaling damage
+  def self.scaling_damage(damage_stat, percent_scaling)
+    damage_stat * percent_scaling
+  end
+
+  # takes in ability base damage and level base scaling, returns damage before champion offensive stat are taken into account
+  # def base_damage(ability_base_damage, ability_level_scaling, ability_level)
+  #   ability_base_damage + (ability_level_scaling * ability_level)
+  # end
+
+  # takes in defensive stat, returns damage_multiplier (% of damage that goes through)
+  def self.damage_multiplier(defensive_stat)
+    100/(100 + defensive_stat)
+  end
+
+  # def base_damage()
+  #   @ability_base_ad
+  # end
+
+  # single instance of damage, auto attack damage included
+  def self.auto_attack_steroid
+    # ability scaling based on champ ad
+    scaling_damage = @champ_one_ad * (@ability.ad_scaling + (@ability.ad_scaling_per_level * @ability_level)) / 100
+    # full damage stat before reduction
+    pre_mitigation_damage = @ability_base_ad + scaling_damage + @champ_one_ad # ability base damage + ability scaling damage + auto attack damage
+    # damage multiplier based on defending armor
+    armor_damage_multiplier = damage_multiplier(@champ_two_armor)
+    # damage once reduced by armor
+    damage = pre_mitigation_damage * armor_damage_multiplier
     # final damage return
     return damage.round
   end
