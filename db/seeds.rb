@@ -13,7 +13,8 @@
 #   hp_scaling: 93,
 #   ad_scaling: 3.8,
 #   mr_scaling: 0.5,
-#   armor_scaling: 3.5
+#   armor_scaling: 3.5,
+#   crit_damage_multiplier: 1.75
 # )
 
 # Champion.create!(
@@ -26,7 +27,22 @@
 #   hp_scaling: 84,
 #   ad_scaling: 4.5,
 #   mr_scaling: 0.75,
-#   armor_scaling: 3.0
+#   armor_scaling: 3.0,
+#   crit_damage_multiplier: 1.75
+# )
+
+# Champion.create!(
+#   name: "Akali", 
+#   description: "ap assassin",
+#   base_hp: 395,
+#   base_ad: 59.7,
+#   base_mr: 35.75,
+#   base_armor: 19.5,
+#   hp_scaling: 105,
+#   ad_scaling: 3.3,
+#   mr_scaling: 1.25,
+#   armor_scaling: 3.5,
+#   crit_damage_multiplier: 1.75
 # )
 
 # Champion.create!(
@@ -39,8 +55,11 @@
 #   hp_scaling: 0,
 #   ad_scaling: 0,
 #   mr_scaling: 0,
-#   armor_scaling: 0
+#   armor_scaling: 0,
+#   crit_damage_multiplier: 1.75
 # )
+
+
 
 # # # Abilities ----------------------------------------
 

@@ -232,19 +232,10 @@ class Calculation < ApplicationRecord
     damage_stat * percent_scaling
   end
 
-  # takes in ability base damage and level base scaling, returns damage before champion offensive stat are taken into account
-  # def base_damage(ability_base_damage, ability_level_scaling, ability_level)
-  #   ability_base_damage + (ability_level_scaling * ability_level)
-  # end
-
   # takes in defensive stat, returns damage_multiplier (% of damage that goes through)
   def self.damage_multiplier(defensive_stat)
     100/(100 + defensive_stat)
   end
-
-  # def base_damage()
-  #   @ability_base_ad
-  # end
 
   # single instance of damage, auto attack damage included
   def self.auto_attack_steroid(damage_multiplier)
