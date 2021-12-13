@@ -10,6 +10,7 @@ Content-Type: application/json
   "champ_two_level": 6,
   "ability_level": 1
 }
+
 ### update
 PATCH http://localhost:3000/calculations/1.json
 Content-Type: application/json

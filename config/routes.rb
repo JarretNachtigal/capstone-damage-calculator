@@ -4,4 +4,9 @@ Rails.application.routes.draw do
   patch "/calculations/:id" => "calculations#update"
   post "/calculations" => "calculations#create"
   delete "/calculations/:id" => "calculations#destroy"
+
+  get "/champions" => "champions#index"
+  get "/abilities" => "abilities#index"
+  get "/abilities/:id" => "abilities#show"
+  # get "/champions" => "champions#index"
 end

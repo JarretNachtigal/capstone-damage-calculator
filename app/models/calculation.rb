@@ -152,10 +152,11 @@ class Calculation < ApplicationRecord
       if n > 6
         init_armor_shred(25) # armor shreded by 25% after 6 hits
       end
-      damage += Calculation.single_proc # calls single_proc_ad becuase single_proc returns string
+      damage += Calculation.single_proc
       @ability_base_ad *= 1.25
       @ability_ad_scaling *= 1.25
-      nearest_enemy_damage += Calculation.single_proc
+      nearest_enemy_damage += Calculation.single_proc # calls the calculation again with stats increased 25% to get nearest enemy damage
+      # fix stats
       @ability_base_ad /= 1.25
       @ability_ad_scaling /= 1.25
     end
