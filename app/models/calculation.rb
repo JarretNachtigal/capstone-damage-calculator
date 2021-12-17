@@ -28,13 +28,13 @@ class Calculation < ApplicationRecord
 
     # fields always needed in physical damage calculations, initialized as instance variables
   def self.init_offensive_fields
-    @champ_one_ad = @champ_one.base_ad + (@champ_one.ad_scaling * @params["champ_one_level"])
+    @champ_one_ad = @champ_one.base_ad + (@champ_one.ad_scaling * @params["champ_one_level"].to_f)
     @champ_one_ap = 0
-    @ability_base_ap = @ability.base_ap + (@ability.base_ap_scaling * @params["ability_level"])
-    @ability_base_ad = @ability.base_ad + (@ability.base_ad_scaling * @params["ability_level"])
-    @ability_ap_scaling = (@ability.ap_scaling + (@ability.ap_scaling_per_level * @params["ability_level"])) / 100
-    @ability_ad_scaling = (@ability.ad_scaling + (@ability.ad_scaling_per_level * @params["ability_level"])) / 100
-    @ability_level = @params["ability_level"].to_f
+    @ability_base_ap = @ability.base_ap + (@ability.base_ap_scaling * @params["ability_level"].to_f)
+    @ability_base_ad = @ability.base_ad + (@ability.base_ad_scaling * @params["ability_level"].to_f)
+    @ability_ap_scaling = (@ability.ap_scaling + (@ability.ap_scaling_per_level * @params["ability_level"].to_f)) / 100
+    @ability_ad_scaling = (@ability.ad_scaling + (@ability.ad_scaling_per_level * @params["ability_level"].to_f)) / 100
+    @ability_level = @params["ability_level"]
     @champ_one_level = @params["champ_one_level"].to_f
     @champ_two_level = @params["champ_two_level"].to_f
     @armor_shred = nil
@@ -45,7 +45,7 @@ class Calculation < ApplicationRecord
     @champ_two_max_hp = @champ_two.base_hp + (@champ_two.hp_scaling * @champ_two_level.to_f)
     # this one uses input from user
     if @params["defending_champion_current_hp"]
-      @champ_two_current_hp = @params["defending_champion_current_hp"]
+      @champ_two_current_hp = @params["defending_champion_current_hp"].to_f
     else
       @champ_two_current_hp = @champ_two_max_hp
     end

@@ -191,7 +191,7 @@
 #   ap_scaling: 0,
 #   ad_scaling_per_level: 15,
 #   ap_scaling_per_level: 0,
-#   keywords: "caitlyn_w",
+#   keywords: "caitlyn_w", 
 #   champion_id: 1
 # )
 

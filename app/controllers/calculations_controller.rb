@@ -7,7 +7,7 @@ class CalculationsController < ApplicationController
     if params[:defending_champion_current_hp]
       hp = params[:defending_champion_current_hp]
     else
-      hp = champ_two.base_hp + (champ_two.hp_scaling * params[:champ_two_level])
+      hp = champ_two.base_hp + (champ_two.hp_scaling * params[:champ_two_level].to_f)
     end
     calculation = Calculation.new(
       champion_id_one: params[:champion_id_one],
