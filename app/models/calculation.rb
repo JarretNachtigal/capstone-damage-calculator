@@ -12,11 +12,11 @@ class Calculation < ApplicationRecord
     @champ_one = champ_one
     @champ_two = champ_two
     @params = params
-    # initialize class variables to be used in calculation (this set will reasonably be used in most calculations, others are initialized when needed)
+    # initialize class instance variables to be used in calculation
     init_offensive_fields()
     # chain start
-    to_return = decide_method
-    # this goes to output field in calculation table
+    to_return = decide_method()
+    # this goes to output field in calculations table
     return to_return
   end
 
@@ -26,7 +26,7 @@ class Calculation < ApplicationRecord
     return Calculation.send("ability_#{@ability.keywords}")
   end
 
-    # fields always needed in physical damage calculations, initialized as instance variables
+    # fields always needed in damage calculations, initialized as instance variables
   def self.init_offensive_fields
     @champ_one_ad = @champ_one.base_ad + (@champ_one.ad_scaling * @params["champ_one_level"].to_f)
     @champ_one_ap = 0
@@ -179,8 +179,7 @@ class Calculation < ApplicationRecord
 
 
   # ----- MULTI-USE -----
-
-
+  
 
   # handle ad and ap method calls for abilities that do a single proc of damage with mixed scaling
   def self.single_proc
