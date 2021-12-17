@@ -8,4 +8,5 @@ Rails.application.routes.draw do
   get "/champions" => "champions#index"
   get "/abilities" => "abilities#index"
   get "/abilities/:id" => "abilities#show"
+  get "items" => "items#index"
 end
