@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_12_07_033447) do
+ActiveRecord::Schema.define(version: 2021_12_17_183515) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -44,6 +44,18 @@ ActiveRecord::Schema.define(version: 2021_12_07_033447) do
     t.integer "champ_two_level"
     t.integer "ability_level"
     t.integer "defending_champion_current_hp"
+    t.integer "attacking_item_id_one"
+    t.integer "attacking_item_id_two"
+    t.integer "attacking_item_id_three"
+    t.integer "attacking_item_id_four"
+    t.integer "attacking_item_id_five"
+    t.integer "attacking_item_id_six"
+    t.integer "defending_item_id_one"
+    t.integer "defending_item_id_two"
+    t.integer "defending_item_id_three"
+    t.integer "defending_item_id_four"
+    t.integer "defending_item_id_five"
+    t.integer "defending_item_id_six"
   end
 
   create_table "champions", force: :cascade do |t|
