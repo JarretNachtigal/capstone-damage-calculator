@@ -183,6 +183,35 @@ class Calculation < ApplicationRecord
     return "#{full_damage} true damage"
   end
 
+  def self.ability_akali_passive
+    return "passive"
+  end
+
+  def self.ability_akali_q
+    return "q"
+  end
+
+  def self.ability_akali_w
+    return "you cannot see me. deal with it"
+  end
+
+  def self.ability_akali_e_one
+    return "e"
+  end
+
+  def self.ability_akali_e_two
+    return "e2"
+  end
+
+  def self.ability_akali_r_one
+    return "r"
+  end
+
+  def self.ability_akali_r_two
+    return "r2"
+  end
+
+  
 
   # ----- MULTI-USE -----
   

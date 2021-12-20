@@ -195,6 +195,111 @@
 #   champion_id: 1
 # )
 
+
+# # akali q
+# Ability.create!(
+#   name: "Five Point Strike",
+#   description: "Akali Q",
+#   damage_type: "magic",
+#   base_ad: 0, # remember how level scaling works
+#   base_ap: 5,
+#   base_ad_scaling: 25,
+#   base_ap_scaling: 0,
+#   ad_scaling: 65,
+#   ap_scaling: 60,
+#   ad_scaling_per_level: 0,
+#   ap_scaling_per_level: 0,
+#   keywords: "akali_q", 
+#   champion_id: 3
+# )
+
+# # akali passive - needs to be dealt with individually
+# Ability.create!(
+#   name: "Assassin's Mark",
+#   description: "Akali Passive",
+#   damage_type: "magic",
+#   base_ad: 0, # remember how level scaling works
+#   base_ap: 0,
+#   base_ad_scaling: 0,
+#   base_ap_scaling: 0,
+#   ad_scaling: 0, # only uses bonus ad, handle seperately
+#   ap_scaling: 55,
+#   ad_scaling_per_level: 0,
+#   ap_scaling_per_level: 0,
+#   keywords: "akali_passive", 
+#   champion_id: 3
+# )
+
+# # akali e1
+# Ability.create!(
+#   name: "Shuriken Flip Two",
+#   description: "Akali E One",
+#   damage_type: "magic",
+#   base_ad: 0, # remember how level scaling works
+#   base_ap: 3.75,
+#   base_ad_scaling: 0,
+#   base_ap_scaling: 26.25,
+#   ad_scaling: 25.5, # only uses bonus ad, handle seperately
+#   ap_scaling: 36,
+#   ad_scaling_per_level: 0,
+#   ap_scaling_per_level: 0,
+#   keywords: "akali_e_one", 
+#   champion_id: 3
+# )
+
+# # akali e2
+# Ability.create!(
+#   name: "Shuriken Flip Two",
+#   description: "Akali E Two",
+#   damage_type: "magic",
+#   base_ad: 0, # remember how level scaling works
+#   base_ap: 8.75,
+#   base_ad_scaling: 0,
+#   base_ap_scaling: 61.25,
+#   ad_scaling: 59.5, # only uses bonus ad, handle seperately
+#   ap_scaling: 84,
+#   ad_scaling_per_level: 0,
+#   ap_scaling_per_level: 0,
+#   keywords: "akali_e_two", 
+#   champion_id: 3
+# )
+
+# # akali r1
+# Ability.create!(
+#   name: "Perfect Execution One",
+#   description: "Akali R One",
+#   damage_type: "magic",
+#   base_ad: 0, # remember how level scaling works
+#   base_ap: 80,
+#   base_ad_scaling: 0,
+#   base_ap_scaling: 140,
+#   ad_scaling: 50, # only uses bonus ad, handle seperately
+#   ap_scaling: 30,
+#   ad_scaling_per_level: 0,
+#   ap_scaling_per_level: 0,
+#   keywords: "akali_r_one", 
+#   champion_id: 3
+# )
+
+# # akali r2 - this scales weird so it will be handled individually
+# Ability.create!(
+#   name: "Perfect Execution Two",
+#   description: "Akali R Two",
+#   damage_type: "magic",
+#   base_ad: 0, # remember how level scaling works
+#   base_ap: 0,
+#   base_ad_scaling: 0,
+#   base_ap_scaling: 0,
+#   ad_scaling: 0, # only uses bonus ad, handle seperately
+#   ap_scaling: 0,
+#   ad_scaling_per_level: 0,
+#   ap_scaling_per_level: 0,
+#   keywords: "akali_r_two", 
+#   champion_id: 3
+# )
+
+
+
 # # Items ----------------
 
 # Item.create!(
