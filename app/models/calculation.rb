@@ -7,11 +7,14 @@ class Calculation < ApplicationRecord
 
   # this function will use the keywords field of the ability model to decide
   # what damage fields needs to be returned
-  def self.handle_output(ability, champ_one, champ_two, params)
+  def self.handle_output(ability, champ_one, champ_two, params, attacking_items, defending_items)
     @ability = ability
     @champ_one = champ_one
     @champ_two = champ_two
     @params = params
+    # these are arrays of items objs
+    @attacking_items = attacking_items
+    @defending_items = defending_items
     # initialize class instance variables to be used in calculation
     init_offensive_fields()
     # chain start
@@ -28,8 +31,8 @@ class Calculation < ApplicationRecord
 
     # fields always needed in damage calculations, initialized as instance variables
   def self.init_offensive_fields
-    @champ_one_ad = @champ_one.base_ad + (@champ_one.ad_scaling * @params["champ_one_level"].to_f)
-    @champ_one_ap = 0
+    @champ_one_ad = @champ_one.base_ad + (@champ_one.ad_scaling * @params["champ_one_level"].to_f) + get_items_ad()
+    @champ_one_ap = get_items_ap()
     @ability_base_ap = @ability.base_ap + (@ability.base_ap_scaling * @params["ability_level"].to_f)
     @ability_base_ad = @ability.base_ad + (@ability.base_ad_scaling * @params["ability_level"].to_f)
     @ability_ap_scaling = (@ability.ap_scaling + (@ability.ap_scaling_per_level * @params["ability_level"].to_f)) / 100
@@ -38,16 +41,15 @@ class Calculation < ApplicationRecord
     @champ_one_level = @params["champ_one_level"].to_f
     @champ_two_level = @params["champ_two_level"].to_f
     @armor_shred = nil
+    init_hp() # probably remove this??? or maybe keep for safety
   end  
 
   def self.init_hp
     # this one uses champion base stats
-    @champ_two_max_hp = @champ_two.base_hp + (@champ_two.hp_scaling * @champ_two_level.to_f)
+    @champ_two_max_hp = @champ_two.base_hp + (@champ_two.hp_scaling * @champ_two_level.to_f) + get_items_hp()
     # this one uses input from user
     if @params["defending_champion_current_hp"]
-      @champ_two_current_hp = @params["defending_champion_current_hp"].to_f
-    else
-      @champ_two_current_hp = @champ_two_max_hp
+      @champ_two_current_hp = @params["defending_champion_current_hp"].to_f + get_items_hp()
     end
   end
 
@@ -246,5 +248,30 @@ class Calculation < ApplicationRecord
     damage = pre_mitigation_damage * damage_multiplier
     # final damage return
     return damage.round
+  end
+
+  def self.get_items_ad
+    ad = 0
+    @attacking_items.each do |item|
+      ad += item.ad
+    end
+    return ad
+  end
+
+  def self.get_items_ap
+    ap = 0
+    @attacking_items.each do |item|
+      ap += item.ap
+    end
+    return ap
+  end
+  
+  # needs optional params so that it can be called from the controller
+  def self.get_items_hp(defending_items = @defending_items)
+    hp = 0
+    defending_items.each do |item|
+      hp += item.hp
+    end
+    return hp
   end
 end

@@ -6,20 +6,22 @@ Content-Type: application/json
   "champion_id_one": 1,
   "champion_id_two": 4,
   "ability_id": 1,
-  "champ_one_level": 6,
+  "champ_one_level": 7,
   "champ_two_level": 6,
-  "ability_level": 1
+  "ability_level": 4,
+  "attacking_item_id_one": 1,
+  "defending_item_id_one": 2
 }
 
-### update
-PATCH http://localhost:3000/calculations/1.json
-Content-Type: application/json
+### update this doesnt work anymore
+# PATCH http://localhost:3000/calculations/1.json
+# Content-Type: application/json
 
-{
-  "champion_id_one": 1,
-  "champion_id_two": 2,
-  "ability_id": 1
-}
+# {
+#   "champion_id_one": 1,
+#   "champion_id_two": 2,
+#   "ability_id": 1
+# }
 
 ### destroy - this id doesnt work anymore
 
