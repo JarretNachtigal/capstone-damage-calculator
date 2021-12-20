@@ -10,7 +10,17 @@ Content-Type: application/json
   "champ_two_level": 6,
   "ability_level": 4,
   "attacking_item_id_one": 1,
-  "defending_item_id_one": 2
+  "defending_item_id_one": 2,
+  "attacking_item_id_two": null,
+  "defending_item_id_two": null,
+  "attacking_item_id_three": null,
+  "defending_item_id_three": null,
+  "attacking_item_id_four": null,
+  "defending_item_id_four": null,
+  "attacking_item_id_five": null,
+  "defending_item_id_five": null,
+  "attacking_item_id_six": null,
+  "defending_item_id_six": null
 }
 
 ### update this doesnt work anymore

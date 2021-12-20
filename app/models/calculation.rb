@@ -1,4 +1,8 @@
 class Calculation < ApplicationRecord
+  # validations
+  validates :attacking_item_id_one, :defending_item_id_one, presence: false
+  validates :champion_id_one, :champion_id_two, :ability_id, :champ_one_level, :champ_two_level, :ability_level, presence: true
+
   # BASE DAMAGE OF AN ABILITY IS STORED AS (BASE - BASE_SCALING) AND WILL BE CORRECTED
   # DURING RUN. EX. CAIT R AD = 300 AT LVL 1, STORED AS 75 + (225 * ABILITY_LEVEL)
   # THIS ALSO APPLIES TO CHAMPION BASE STATS
@@ -25,7 +29,7 @@ class Calculation < ApplicationRecord
 
   # called by handle_output, decides which ability method to call. replace with something smarter if possible
   def self.decide_method
-    # calls ability methods dynamically. saves like 1000 lines. big move
+    # calls ability methods
     return Calculation.send("ability_#{@ability.keywords}")
   end
 
@@ -251,26 +255,38 @@ class Calculation < ApplicationRecord
   end
 
   def self.get_items_ad
+    # if there are no items
+    if @attacking_items == nil
+      return 0
+    end
     ad = 0
     @attacking_items.each do |item|
-      ad += item.ad
+      ad += item["ad"]
     end
     return ad
   end
 
   def self.get_items_ap
+    # if there are no items
+    if @attacking_items == nil
+      return 0
+    end
     ap = 0
     @attacking_items.each do |item|
-      ap += item.ap
+      ap += item["ap"]
     end
     return ap
   end
   
   # needs optional params so that it can be called from the controller
   def self.get_items_hp(defending_items = @defending_items)
+    # if there are no items
+    if defending_items == nil
+      return 0
+    end
     hp = 0
     defending_items.each do |item|
-      hp += item.hp
+      hp += item["hp"]
     end
     return hp
   end
