@@ -244,9 +244,17 @@ class Calculation < ApplicationRecord
     # 0.2 for each 7% missing
     missing_hp_multiplier = (percent_missing_health / 0.07)
     # how much damage increases by missing hp
-    percent_missing_health_scaling = 0.2 * missing_hp_multiplier
+    percent_missing_health_scaling = 0
+    if missing_hp_multiplier != 0
+      percent_missing_health_scaling = 0.2 * missing_hp_multiplier
+    else
+      percent_missing_health_scaling = 1
+    end
     # missing hp damage
-    missing_hp_damage = @ability_base_ap * percent_missing_health_scaling
+    missing_hp_damage = 0
+    if missing_hp_multiplier != 0
+      missing_hp_damage = @ability_base_ap * percent_missing_health_scaling
+    end
     @ability_base_ap *= percent_missing_health_scaling
     damage = (@ability_base_ap + missing_hp_damage) * damage_multiplier
     # byebug
