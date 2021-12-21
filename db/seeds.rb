@@ -195,7 +195,6 @@
 #   champion_id: 1
 # )
 
-
 # # akali q
 # Ability.create!(
 #   name: "Five Point Strike",

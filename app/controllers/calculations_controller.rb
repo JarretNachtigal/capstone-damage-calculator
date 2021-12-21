@@ -47,7 +47,7 @@ class CalculationsController < ApplicationController
     # add items to calculation.new (i think it will be fine even if they are null)
       # default to full hp if not input
     if params[:defending_champion_current_hp]
-      hp = params[:defending_champion_current_hp] + Calculation.get_items_hp(defending_items)
+      hp = params[:defending_champion_current_hp].to_i + Calculation.get_items_hp(defending_items)
     else
       hp = champ_two.base_hp + (champ_two.hp_scaling * params[:champ_two_level].to_f) + Calculation.get_items_hp(defending_items)
     end

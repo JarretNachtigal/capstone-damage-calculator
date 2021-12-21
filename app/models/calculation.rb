@@ -53,7 +53,9 @@ class Calculation < ApplicationRecord
     @champ_two_max_hp = @champ_two.base_hp + (@champ_two.hp_scaling * @champ_two_level.to_f) + get_items_hp()
     # this one uses input from user
     if @params["defending_champion_current_hp"]
-      @champ_two_current_hp = @params["defending_champion_current_hp"].to_f + get_items_hp()
+      @champ_two_current_hp = @params["defending_champion_current_hp"].to_f + get_items_hp().to_f
+    else
+      @champ_two_current_hp = @champ_two_max_hp
     end
   end
 
@@ -75,7 +77,9 @@ class Calculation < ApplicationRecord
   def self.ability_caitlyn_q
     init_armor()
     damage_multiplier = damage_multiplier(@champ_two_armor)
-    return Calculation.single_proc_ad(damage_multiplier)
+    full_damage = Calculation.single_proc_ad(damage_multiplier)
+    reduced_damage = Calculation.single_proc_ad(damage_multiplier, 0.6)
+    return "#{full_damage} to first enemy hit, #{reduced_damage} to others"
   end
   # this can call cait_passive
   def self.ability_caitlyn_w
@@ -173,22 +177,38 @@ class Calculation < ApplicationRecord
     # hard coded, refactor later if worth while
     init_hp()
     # % missing hp scaling by R level
-    percent_missing_health_scaling = (@ability.ad_scaling + @ability_level * @ability.ad_scaling_per_level)/100.0
+    percent_missing_health_scaling = (@ability.ad_scaling.to_f + @ability_level.to_f * @ability.ad_scaling_per_level.to_f)/100.0
     # defending champion current health must be added to calculation model
     # ----- hp calc here -----
     missing_hp = @champ_two_max_hp - @champ_two_current_hp
     missing_hp_damage = missing_hp * percent_missing_health_scaling
     # final
     full_damage = (@ability_base_ad + missing_hp_damage).round
+    # byebug
     return "#{full_damage} true damage"
   end
 
   def self.ability_akali_passive
-    return "passive"
+    damage_multiplier = damage_multiplier(@champ_two_mr.to_f)
+    # full damage stat before reduction
+    scaling_damage = @champ_one_ap * @ability_ap_scaling
+    # physical damage only from bonus ad
+    physical_damage = get_items_ad()
+    # damage before reduction
+    pre_mitigation_damage = @ability_base_ap + scaling_damage + physical_damage
+    # damage once reduced by mr minus damage from auto attack
+    damage = (pre_mitigation_damage * damage_multiplier)
+    # swap multiplier
+    damage_multiplier = damage_multiplier(@champ_two_armor.to_f)
+    # add aa damage
+    damage += @champ_one_ad * damage_multiplier
+    # final damage return
+    return damage.round
   end
 
   def self.ability_akali_q
-    return "q"
+    init_mr()
+    return Calculation.single_proc # this one handles the damage_multiplier on its own
   end
 
   def self.ability_akali_w
@@ -196,19 +216,41 @@ class Calculation < ApplicationRecord
   end
 
   def self.ability_akali_e_one
-    return "e"
+    return Calculation.single_proc
   end
 
   def self.ability_akali_e_two
-    return "e2"
+    return Calculation.single_proc
   end
 
   def self.ability_akali_r_one
-    return "r"
+    # only bonus ad
+    @champ_one_ad = get_items_ad()
+    return Calculation.single_proc
   end
 
   def self.ability_akali_r_two
-    return "r2"
+    init_mr()
+    damage_multiplier = damage_multiplier(@champ_two_mr)
+    # 60, 130, 200
+    @ability_base_ap = -10 + (70 * @ability_level.to_f)
+    # missing hp
+    missing_hp = @champ_two_max_hp - @champ_two_current_hp
+    percent_missing_health = missing_hp / @champ_two_max_hp
+    # cap at 70%
+    if percent_missing_health > 0.7
+      percent_missing_health = 0.7
+    end
+    # 0.2 for each 7% missing
+    missing_hp_multiplier = (percent_missing_health / 0.07)
+    # how much damage increases by missing hp
+    percent_missing_health_scaling = 0.2 * missing_hp_multiplier
+    # missing hp damage
+    missing_hp_damage = @ability_base_ap * percent_missing_health_scaling
+    @ability_base_ap *= percent_missing_health_scaling
+    damage = (@ability_base_ap + missing_hp_damage) * damage_multiplier
+    # byebug
+    return damage.round
   end
 
   
@@ -232,7 +274,7 @@ class Calculation < ApplicationRecord
   end
 
   # amount of damage from ad (not damage type of ability overall)
-  def self.single_proc_ad(damage_multiplier)
+  def self.single_proc_ad(damage_multiplier, damage_reduction = 0)
      # reduces armor by armor_shred%
     if @armor_shred
       @champ_two_armor = @champ_two_armor * ((100-armor_shred)/100)
@@ -245,6 +287,10 @@ class Calculation < ApplicationRecord
     pre_mitigation_damage = @ability_base_ad + scaling_damage
     # damage once reduced by armor
     damage = pre_mitigation_damage * damage_multiplier
+    if damage_reduction != 0
+      damage = pre_mitigation_damage * damage_reduction
+      damage = damage * damage_multiplier
+    end
     # final damage return
     return damage.round
   end
@@ -268,7 +314,7 @@ class Calculation < ApplicationRecord
 
   # takes in defensive stat, returns damage_multiplier (% of damage that goes through)
   def self.damage_multiplier(defensive_stat)
-    100/(100 + defensive_stat)
+    100/(100 + defensive_stat.to_f)
   end
 
   # single instance of damage, auto attack damage included
