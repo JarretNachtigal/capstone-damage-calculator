@@ -151,7 +151,7 @@
 #   damage_type: "true",
 #   base_ad: 0, # remember how level scaling works
 #   base_ap: 0,
-#   base_ad_scaling: 0,
+#   base_ad_scaling: 150,
 #   base_ap_scaling: 0,
 #   ad_scaling: 0,
 #   ap_scaling: 0,
