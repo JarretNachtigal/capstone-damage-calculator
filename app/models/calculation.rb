@@ -1,10 +1,10 @@
 class Calculation < ApplicationRecord
   # validations
-  validates :attacking_item_id_one, :defending_item_id_one, presence: false
+  validates :attacking_item_id_one, :defending_item_id_one, presence: false # what is this? lol
   validates :champion_id_one, :champion_id_two, :ability_id, :champ_one_level, :champ_two_level, :ability_level, presence: true
 
   # BASE DAMAGE OF AN ABILITY IS STORED AS (BASE - BASE_SCALING) AND WILL BE CORRECTED
-  # DURING RUN. EX. CAIT R AD = 300 AT LVL 1, STORED AS 75 + (225 * ABILITY_LEVEL)
+  # DURING RUN. EX. CAIT R ATTACK DAMAGE = 300 AT LVL 1, STORED AS 75 + (225 * ABILITY_LEVEL)
   # THIS ALSO APPLIES TO CHAMPION BASE STATS
   
   # ----------
@@ -44,6 +44,8 @@ class Calculation < ApplicationRecord
     @ability_level = @params["ability_level"]
     @champ_one_level = @params["champ_one_level"].to_f
     @champ_two_level = @params["champ_two_level"].to_f
+    @champ_two_mr = @champ_two.base_mr + (@champ_two.mr_scaling * @champ_two_level)
+    @champ_two_armor = @champ_two.base_armor + (@champ_two.armor_scaling * @champ_two_level)
     @armor_shred = nil
     init_hp() # probably remove this??? or maybe keep for safety
   end  
@@ -59,15 +61,6 @@ class Calculation < ApplicationRecord
     end
   end
 
-  # fields always needed in magic damage calculations, initialized as instance variables
-  def self.init_mr
-    @champ_two_mr = @champ_two.base_mr + (@champ_two.mr_scaling * @champ_two_level)
-  end
-
-  def self.init_armor
-    @champ_two_armor = @champ_two.base_armor + (@champ_two.armor_scaling * @champ_two_level)
-  end
-
   def self.init_armor_shred(armor_shred)
     @armor_shred = armor_shred
   end
@@ -75,7 +68,7 @@ class Calculation < ApplicationRecord
   # ----- CAITLYN -----
 
   def self.ability_caitlyn_q
-    init_armor()
+    # init_armor() # deleted method
     damage_multiplier = damage_multiplier(@champ_two_armor)
     full_damage = Calculation.single_proc_ad(damage_multiplier)
     reduced_damage = Calculation.single_proc_ad(damage_multiplier, 0.6)
@@ -88,19 +81,19 @@ class Calculation < ApplicationRecord
     passive_damage = Calculation.ability_caitlyn_passive(passive)
     passive_damage = passive_damage.split(' ')
     passive_damage = passive_damage[0].to_f
-    init_armor()
+    # init_armor() # deleted method
     damage_multiplier = damage_multiplier(@champ_two_armor)
     w_damage = Calculation.single_proc_ad(damage_multiplier)
     damage = passive_damage + w_damage
     return "#{w_damage.round} from trap, #{passive_damage.round} from headshot, #{damage.round} total"
   end
   def self.ability_caitlyn_e
-    init_mr()
+    # init_mr() # deleted method
     damage_multiplier = damage_multiplier(@champ_two_mr)
     return Calculation.single_proc_ap(damage_multiplier)
   end
   def self.ability_caitlyn_r
-    init_armor()
+    # init_armor() # deleted method
     damage_multiplier = damage_multiplier(@champ_two_armor)
     return Calculation.single_proc_ad(damage_multiplier)
   end
@@ -123,7 +116,7 @@ class Calculation < ApplicationRecord
     # damage before armor
     pre_mitigation_damage = (@champ_one_ad + base_ad_scaling_damage + crit_scaling_damage).round
     # damage once reduced by armor
-    init_armor()
+    # init_armor() # deleted method
     damage_multiplier = damage_multiplier(@champ_two_armor)
     damage = pre_mitigation_damage * damage_multiplier
     # final damage return
@@ -133,7 +126,7 @@ class Calculation < ApplicationRecord
   # ----- GAREN -----
 
   def self.ability_garen_q
-    init_armor()
+    # init_armor() # deleted method
     damage_multiplier = damage_multiplier(@champ_two_armor)
     return Calculation.auto_attack_steroid(damage_multiplier)
   end
@@ -207,7 +200,7 @@ class Calculation < ApplicationRecord
   end
 
   def self.ability_akali_q
-    init_mr()
+    # init_mr() # deleted method
     return Calculation.single_proc # this one handles the damage_multiplier on its own
   end
 
@@ -230,7 +223,7 @@ class Calculation < ApplicationRecord
   end
 
   def self.ability_akali_r_two
-    init_mr()
+    # init_mr() # deleted method
     damage_multiplier = damage_multiplier(@champ_two_mr)
     # 60, 130, 200
     @ability_base_ap = -10 + (70 * @ability_level.to_f)
@@ -270,10 +263,10 @@ class Calculation < ApplicationRecord
   def self.single_proc
     damage_multiplier = 1 # true damage
     if @ability.damage_type == "phyical"
-      init_armor()
+      # init_armor() # deleted method
       damage_multiplier = damage_multiplier(@champ_two_armor)
     elsif @ability.damage_type == "magic"
-      init_mr()
+      # init_mr() # deleted method
       damage_multiplier = damage_multiplier(@champ_two_mr)
     end
     damage = single_proc_ad(damage_multiplier) + single_proc_ap(damage_multiplier)

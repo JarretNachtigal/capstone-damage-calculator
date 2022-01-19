@@ -3,12 +3,12 @@ POST http://localhost:3000/calculations.json
 Content-Type: application/json
 
 {
-  "champion_id_one": 1,
+  "champion_id_one": 3,
   "champion_id_two": 4,
-  "ability_id": 1,
-  "champ_one_level": 7,
+  "ability_id": 14,
+  "champ_one_level": 6,
   "champ_two_level": 6,
-  "ability_level": 4,
+  "ability_level": 1,
   "attacking_item_id_one": 1,
   "defending_item_id_one": 2,
   "attacking_item_id_two": null,
