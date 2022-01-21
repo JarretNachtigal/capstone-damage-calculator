@@ -181,6 +181,8 @@ class Calculation < ApplicationRecord
     return "#{full_damage} true damage"
   end
 
+  # ----- AKALI -----
+
   def self.ability_akali_passive
     damage_multiplier = damage_multiplier(@champ_two_mr.to_f)
     # full damage stat before reduction
@@ -198,7 +200,6 @@ class Calculation < ApplicationRecord
     # final damage return
     return damage.round
   end
-
   def self.ability_akali_q
     # init_mr() # deleted method
     return Calculation.single_proc # this one handles the damage_multiplier on its own
@@ -254,7 +255,26 @@ class Calculation < ApplicationRecord
     return damage.round
   end
 
-  
+  # ----- JINX -----
+
+  def jinx_q
+    damage_multiplier = damage_multiplier(@champ_two_armor)
+    minigun_damage = Calculation.single_proc_ad(damage_multiplier)
+    @champ_one_ad *= 1.1 # rockets do 10% increased damage
+    rocket_damage = Calculation.single_proc_ad(damage_multiplier)
+    return "minigun damage: #{minigun_damage}, Rocket Damage: #{rocket_damage}"
+  end
+  def jinx_w
+    damage_multiplier = damage_multiplier(@champ_two_armor)
+    return Calculation.single_proc_ad(damage_multiplier)
+  end
+  def jinx_e
+    damage_multiplier = damage_multiplier(@champ_two_mr)
+    return Calculation.single_proc_ap(damage_multiplier)
+  end
+  def jinx_r
+    return "not done yet"
+  end
 
   # ----- MULTI-USE -----
   
