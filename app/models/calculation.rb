@@ -19,8 +19,8 @@ class Calculation < ApplicationRecord
     # these are arrays of items objs
     @attacking_items = attacking_items
     @defending_items = defending_items
-    # initialize class instance variables to be used in calculation
-    init_offensive_fields()
+    # initialize stats as instance variables to be used in calculation
+    init_fields()
     # chain start
     to_return = decide_method()
     # this goes to output field in calculations table
@@ -34,7 +34,7 @@ class Calculation < ApplicationRecord
   end
 
     # fields always needed in damage calculations, initialized as instance variables
-  def self.init_offensive_fields
+  def self.init_fields
     @champ_one_ad = @champ_one.base_ad + (@champ_one.ad_scaling * @params["champ_one_level"].to_f) + get_items_ad()
     @champ_one_ap = get_items_ap()
     @ability_base_ap = @ability.base_ap + (@ability.base_ap_scaling * @params["ability_level"].to_f)
@@ -217,7 +217,7 @@ class Calculation < ApplicationRecord
   end
 
   def self.ability_akali_r_one
-    # only bonus ad
+    # this ability only scales with bonus ad (and total ap)
     @champ_one_ad = get_items_ad()
     return Calculation.single_proc
   end

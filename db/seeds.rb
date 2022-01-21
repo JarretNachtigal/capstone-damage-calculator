@@ -45,6 +45,20 @@
 #   crit_damage_multiplier: 1.75
 # )
 
+Champion.create!(
+  name: "Jinx", 
+  description: "adc",
+  base_hp: 524,
+  base_ad: 53.6,
+  base_mr: 29.5,
+  base_armor: 22.5,
+  hp_scaling: 86,
+  ad_scaling: 3.4,
+  mr_scaling: 0.5,
+  armor_scaling: 3.5,
+  crit_damage_multiplier: 1.75
+)
+
 # Champion.create!(
 #   name: "Dummy", 
 #   description: "for testing",
@@ -295,6 +309,76 @@
 #   ap_scaling_per_level: 0,
 #   keywords: "akali_r_two", 
 #   champion_id: 3
+# )
+
+# jinx q - display auto attack damage with rockets vs minigun
+# Ability.create!(
+#   name: "Switcheroo!",
+#   description: "Jinx q",
+#   damage_type: "physical",
+#   base_ad: 0, # remember how level scaling works
+#   base_ap: 0,
+#   base_ad_scaling: 0,
+#   base_ap_scaling: 0,
+#   ad_scaling: 0, # only uses bonus ad, handle seperately
+#   ap_scaling: 0,
+#   ad_scaling_per_level: 0,
+#   ap_scaling_per_level: 0,
+#   keywords: "jinx_q", 
+#   champion_id: 5
+# )
+
+# jinx w
+# Ability.create!(
+#   name: "Zap!",
+#   description: "Jinx w",
+#   damage_type: "physical",
+#   base_ad: -40, # remember how level scaling works
+#   base_ap: 0,
+#   base_ad_scaling: 50,
+#   base_ap_scaling: 0,
+#   ad_scaling: 160, # only uses bonus ad, handle seperately
+#   ap_scaling: 0,
+#   ad_scaling_per_level: 0,
+#   ap_scaling_per_level: 0,
+#   keywords: "jinx_w", 
+#   champion_id: 5
+# )
+
+# jinx e
+# Ability.create!(
+#   name: "Flame Chompers!",
+#   description: "Jinx e",
+#   damage_type: "magic",
+#   base_ad: 0, # remember how level scaling works
+#   base_ap: 20,
+#   base_ad_scaling: 0,
+#   base_ap_scaling: 50,
+#   ad_scaling: 0, # only uses bonus ad, handle seperately
+#   ap_scaling: 100,
+#   ad_scaling_per_level: 0,
+#   ap_scaling_per_level: 0,
+#   keywords: "jinx_e", 
+#   champion_id: 5
+# )
+
+# jinx r - handle in method
+# values in db are based on minimum damage (based on distance traveled - capping at 1500 range - 10% to 100% )
+# splash damage and % missing health damage done in calculation.rb
+# Ability.create!(
+#   name: "Super Mega Death Rocket!",
+#   description: "Jinx r",
+#   damage_type: "physical",
+#   base_ad: 10, # remember how level scaling works
+#   base_ap: 0,
+#   base_ad_scaling: 15,
+#   base_ap_scaling: 0,
+#   ad_scaling: 15, # only uses bonus ad, handle seperately
+#   ap_scaling: 0,
+#   ad_scaling_per_level: 0,
+#   ap_scaling_per_level: 0,
+#   keywords: "jinx_r", 
+#   champion_id: 5
 # )
 
 
