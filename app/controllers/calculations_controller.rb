@@ -3,6 +3,10 @@ class CalculationsController < ApplicationController
     champ_one = Champion.find(params[:champion_id_one])
     champ_two = Champion.find(params[:champion_id_two])
     ability = Ability.find(params[:ability_id])
+    # if the frontend wont do it, ill do it myself ffs
+    if params[:defending_champion_current_hp] == 0 || params[:defending_champion_current_hp] == ""
+      params[:defending_champion_current_hp] = nil
+    end
     attacking_items = []
     defending_items = []
     # items
